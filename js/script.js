@@ -37,19 +37,19 @@ document.addEventListener("DOMContentLoaded", () => {
   // disable color Select
   colorMenu.disabled = true;
 
-  // loops through a collection of elements and sets hidden attribute to boolean value
-  //and selected attribute to the opposite boolean value of hidden
-  const displayOptions = (arr, attribute, bool) => {
-    arr.forEach((item) => {
-      item[attribute] = bool;
-    });
-    arr[0].selected = !bool;
-  };
-
-  // function to modify color menu options
+  //  modify color menu options
   const modifyColorMenu = (theme) => {
     const heartShirts = document.querySelectorAll("[data-theme='heart js']");
     const punShirts = document.querySelectorAll("[data-theme= 'js puns']");
+
+    // loops through a collection of elements and sets attribute to a boolean value
+    //and selected attribute to the opposite boolean value of hidden
+    const displayOptions = (arr, attribute, bool) => {
+      arr.forEach((item) => {
+        item[attribute] = bool;
+      });
+      arr[0].selected = !bool;
+    };
 
     if (theme === "js puns") {
       displayOptions(punShirts, "hidden", false);
