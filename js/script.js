@@ -1,26 +1,44 @@
 document.addEventListener("DOMContentLoaded", () => {
   // DOM Selections
-  const nameInput = document.getElementById("name");
-  const jobInput = document.getElementById("other-job-role");
   const jobSelect = document.getElementById("title");
-  const colorMenu = document.getElementById("color");
   const designMenu = document.getElementById("design");
-  const activitiesBox = document.getElementById("activities-box");
+  const activitiesList = document.getElementById("activities");
+  const paymentMenu = document.getElementById("payment");
 
-  //   add focus to Name Input on load
-  nameInput.focus();
+  /* --------------------------
+      on page load
+  --------------------------------*/
+
+  const loadPage = () => {
+    const nameInput = document.getElementById("name");
+    const jobInput = document.getElementById("other-job-role");
+    const paypalPymt = document.getElementById("paypal");
+    const bitcoinPymt = document.getElementById("bitcoin");
+    const colorMenu = document.getElementById("color");
+
+    //hide job role input, paypal and bitcoin payment options
+    jobInput.style.display = "none";
+    paypalPymt.style.display = "none";
+    bitcoinPymt.style.display = "none";
+
+    // disable color Select
+    colorMenu.disabled = true;
+
+    //Adds focus to Name input
+    nameInput.focus();
+  };
+
+  window.addEventListener("load", loadPage);
 
   /* --------------------------
         Job Role Section
   --------------------------------*/
 
-  //  hide Job Role input on Load;
-  jobInput.style.display = "none";
-
   //  Event handler Displaying job role input only when "other"
   //  is selected from select menu
   const showJobInput = (evt) => {
     let role = evt.target;
+    const jobInput = document.getElementById("other-job-role");
     if (role.value === "other") {
       jobInput.style.display = "";
     } else {
@@ -34,10 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
        T-shirt info Section
   --------------------------------*/
 
-  // disable color Select
-  colorMenu.disabled = true;
-
-  //  modify color menu options
+  //  changes the color menu options
   const modifyColorMenu = (theme) => {
     const heartShirts = document.querySelectorAll("[data-theme='heart js']");
     const punShirts = document.querySelectorAll("[data-theme= 'js puns']");
@@ -60,8 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  //
   const enableColorMenu = (evt) => {
+    const colorMenu = document.getElementById("color");
     const theme = evt.target.value;
     colorMenu.disabled = false;
     modifyColorMenu(theme);
@@ -73,7 +88,71 @@ document.addEventListener("DOMContentLoaded", () => {
        Activities Section
   --------------------------------*/
 
-  const handleActivitySelect = (evt) => {};
+  const handleActivitySelect = (evt) => {
+    const checkboxes = document.querySelectorAll(".activities input");
+    const priceOutput = document.querySelector("#activities-cost");
+    let clicked = evt.target;
 
-  activitiesBox.addEventListener("click", handleActivitySelect);
+    //add the cost of selected activites
+    const getTotalCost = (checkboxes) => {
+      let total = 0;
+      checkboxes.forEach((box) => {
+        if (box.checked) {
+          total += +box.dataset.cost;
+        }
+      });
+      return total;
+    };
+
+    //blocks a user from registering for activities which have a time conflict
+    const blockTimeConflict = (checkboxes, clicked) => {
+      checkboxes.forEach((box) => {
+        if (
+          box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
+          clicked.checked
+        ) {
+          box.disabled = true;
+        } else {
+          box.disabled = false;
+        }
+        clicked.disabled = false;
+      });
+    };
+
+    if (clicked.tagName === "INPUT") {
+      blockTimeConflict(checkboxes, clicked);
+    }
+    let total = getTotalCost(checkboxes);
+    priceOutput.textContent = `Total: $${total}`;
+  };
+
+  activitiesList.addEventListener("click", handleActivitySelect);
+
+  /* --------------------------
+       Payment Selection Section
+  --------------------------------*/
+
+  // toggles between the different payment methods on the page
+  const changePaymentMethod = (evt) => {
+    const credit = document.getElementById("credit-card");
+    const paypalPymt = document.getElementById("paypal");
+    const bitcoinPymt = document.getElementById("bitcoin");
+    let method = evt.target.value;
+
+    if (method === "bitcoin") {
+      credit.style.display = "none";
+      paypalPymt.style.display = "none";
+      bitcoinPymt.style.display = "";
+    } else if (method === "paypal") {
+      credit.style.display = "none";
+      paypalPymt.style.display = "";
+      bitcoinPymt.style.display = "none";
+    } else {
+      credit.style.display = "";
+      paypalPymt.style.display = "none";
+      bitcoinPymt.style.display = "none";
+    }
+  };
+
+  paymentMenu.addEventListener("change", changePaymentMethod);
 });
