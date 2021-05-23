@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const designMenu = document.getElementById("design");
   const activitiesList = document.getElementById("activities");
   const paymentMenu = document.getElementById("payment");
+  const form = document.querySelector("form");
 
   /* --------------------------
       on page load
@@ -20,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
     jobInput.style.display = "none";
     paypalPymt.style.display = "none";
     bitcoinPymt.style.display = "none";
+
+    // sets payment select menu  to credit card optiom
+    paymentMenu.children[1].selected = true;
 
     // disable color Select
     colorMenu.disabled = true;
@@ -88,45 +92,49 @@ document.addEventListener("DOMContentLoaded", () => {
        Activities Section
   --------------------------------*/
 
+  // adds activity selection functionality to page
   const handleActivitySelect = (evt) => {
     const checkboxes = document.querySelectorAll(".activities input");
     const priceOutput = document.querySelector("#activities-cost");
-    let clicked = evt.target;
 
     //add the cost of selected activites
     const getTotalCost = (checkboxes) => {
-      let total = 0;
+      let totalCost = 0;
       checkboxes.forEach((box) => {
         if (box.checked) {
-          total += +box.dataset.cost;
+          totalCost += +box.dataset.cost;
         }
       });
-      return total;
+      return totalCost;
     };
 
     //blocks a user from registering for activities which have a time conflict
-    const blockTimeConflict = (checkboxes, clicked) => {
-      checkboxes.forEach((box) => {
-        if (
-          box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
-          clicked.checked
-        ) {
-          box.disabled = true;
-        } else {
-          box.disabled = false;
-        }
-        clicked.disabled = false;
-      });
-    };
+    // const blockTimeConflict = (checkboxes, clicked) => {
+    //   checkboxes.forEach((box) => {
+    //     if (
+    //       box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
+    //       box !== clicked
+    //     ) {
+    //       box.disabled = true;
+    //     } else if (
+    //       box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
+    //       box !== clicked &&
+    //       !clicked.checked
+    //     ) {
+    //       box.disabled = false;
+    //     }
+    //   });
+    // };
 
-    if (clicked.tagName === "INPUT") {
-      blockTimeConflict(checkboxes, clicked);
-    }
+    // if (clicked.tagName === "INPUT") {
+    //   blockTimeConflict(checkboxes, clicked);
+    // }
+
     let total = getTotalCost(checkboxes);
     priceOutput.textContent = `Total: $${total}`;
   };
 
-  activitiesList.addEventListener("click", handleActivitySelect);
+  activitiesList.addEventListener("change", handleActivitySelect);
 
   /* --------------------------
        Payment Selection Section
@@ -155,4 +163,60 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   paymentMenu.addEventListener("change", changePaymentMethod);
+
+  /* --------------------------
+       Form Validation
+  --------------------------------*/
+
+  /**
+   *
+   * VALIDATORS
+   *
+   */
+
+  //Checks checks if name field is not empty
+  const nameValidator = () => {
+    const nameValue = document.getElementById("name").value;
+    const isNameValid = /^[a-zA-Z]+ ?[a-zA-Z]*? ?[a-zA-Z]*?$/.test(nameValue);
+    return isNameValid;
+  };
+
+  // helper function to validate email input
+  const emailValidator = () => {
+    const emailValue = document.getElementById("email").value;
+    const isEmailValid = /^[^@]+@[^@.]+\.[a-z]+$/.test(emailValue);
+    return isEmailValid;
+  };
+
+  /* Helper function to validate activities section */
+  const activitiesValidator = () => {
+    const actTotal = document.querySelectorAll(
+      ".activities input:checked"
+    ).length;
+    const isActivitiesSectionValid = actTotal > 0;
+
+    return isActivitiesSectionValid;
+  };
+
+  const formValidate = (evt) => {
+    if (!nameValidator()) {
+      evt.preventDefault();
+      console.log("Name is inValid");
+    }
+
+    if (!emailValidator()) {
+      evt.preventDefault();
+      console.log("email is inValid");
+    }
+
+    if (!activitiesValidator()) {
+      evt.preventDefault();
+      console.log("activity is inValid");
+    }
+
+    if (paymentMenu.value === "credit-card") {
+    }
+  };
+
+  form.addEventListener("submit", formValidate);
 });
