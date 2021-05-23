@@ -198,25 +198,88 @@ document.addEventListener("DOMContentLoaded", () => {
     return isActivitiesSectionValid;
   };
 
-  const formValidate = (evt) => {
+  /**
+   *
+   * credit card VALIDATORS
+   *
+   */
+
+  // helper function to validate credit card number
+  const validateCredNum = () => {
+    const credNum = document.getElementById("cc-num").value;
+    const isCredNumValid = /^\d{13,16}$/.test(credNum);
+
+    return isCredNumValid;
+  };
+
+  // helper function to validate zip
+  const validateZip = () => {
+    const zip = document.getElementById("zip").value;
+    const isZipValid = /^\d{5}$/.test(zip);
+
+    return isZipValid;
+  };
+
+  // helper function to validate zip
+  const validateCvv = () => {
+    const cvv = document.getElementById("cvv").value;
+    const isCvvValid = /^\d{3}$/.test(cvv);
+    return isCvvValid;
+  };
+
+  // form validation event handler
+  const formValidation = (evt) => {
+    // Shows validation styling on webpage
+    const showPageValidation = (id, status1, status2, display = "") => {
+      const label = document.getElementById(id).parentNode;
+      label.classList.remove(status1);
+      label.classList.add(status2);
+      label.lastElementChild.style.display = display;
+    };
+
     if (!nameValidator()) {
       evt.preventDefault();
-      console.log("Name is inValid");
+      showPageValidation("name", "valid", "not-valid", "block");
+    } else {
+      showPageValidation("name", "not-valid", "valid");
     }
 
     if (!emailValidator()) {
       evt.preventDefault();
-      console.log("email is inValid");
+      showPageValidation("email", "valid", "not-valid", "block");
+    } else {
+      showPageValidation("email", "not-valid", "valid");
     }
 
     if (!activitiesValidator()) {
       evt.preventDefault();
-      console.log("activity is inValid");
+      showPageValidation("activities-box", "valid", "not-valid", "block");
+    } else {
+      showPageValidation("activities-box", "not-valid", "valid");
     }
 
     if (paymentMenu.value === "credit-card") {
+      if (!validateCredNum()) {
+        evt.preventDefault();
+        showPageValidation("cc-num", "valid", "not-valid", "block");
+      } else {
+        showPageValidation("cc-num", "not-valid", "valid");
+      }
+
+      if (!validateZip()) {
+        evt.preventDefault();
+        showPageValidation("zip", "valid", "not-valid", "block");
+      } else {
+        showPageValidation("zip", "not-valid", "valid");
+      }
+      if (!validateCvv()) {
+        evt.preventDefault();
+        showPageValidation("cvv", "valid", "not-valid", "block");
+      } else {
+        showPageValidation("cvv", "not-valid", "valid");
+      }
     }
   };
 
-  form.addEventListener("submit", formValidate);
+  form.addEventListener("submit", formValidation);
 });
