@@ -4,6 +4,7 @@ In this project, JavaScript was used to enhance the interactive of a registratio
 
 - Adding customized and conditional behavior and interactivity
 - Validating user input and providing helpful error messages when the user enters invalid information into the form fields.
+- The zipcode field validates in real time and gives reasons why validation fails.
 
 ## Languages
 
