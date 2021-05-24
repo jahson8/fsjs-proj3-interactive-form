@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const activitiesList = document.getElementById("activities");
   const paymentMenu = document.getElementById("payment");
   const form = document.querySelector("form");
+  const zipInput = document.getElementById("zip");
 
   /* --------------------------
       on page load
@@ -109,8 +110,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (clickedTime === time && clicked !== box) {
           if (clicked.checked) {
             box.disabled = true;
+            box.parentNode.classList.add("disabled");
           } else {
             box.disabled = false;
+            box.parentNode.classList.remove("disabled");
           }
         }
 
@@ -218,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // helper function to validate zip
   const validateZip = () => {
-    const zip = document.getElementById("zip").value;
+    const zip = zipInput.value;
     const isZipValid = /^\d{5}$/.test(zip);
     return isZipValid;
   };
@@ -230,16 +233,16 @@ document.addEventListener("DOMContentLoaded", () => {
     return isCvvValid;
   };
 
+  // Shows validation styling on webpage
+  const showFormValidation = (id, status1, status2, display = "") => {
+    const label = document.getElementById(id).parentNode;
+    label.classList.remove(status1);
+    label.classList.add(status2);
+    label.lastElementChild.style.display = display;
+  };
+
   // form validation event handler
   const formValidation = (evt) => {
-    // Shows validation styling on webpage
-    const showFormValidation = (id, status1, status2, display = "") => {
-      const label = document.getElementById(id).parentNode;
-      label.classList.remove(status1);
-      label.classList.add(status2);
-      label.lastElementChild.style.display = display;
-    };
-
     if (!nameValidator()) {
       evt.preventDefault();
       showFormValidation("name", "valid", "not-valid", "block");
@@ -284,6 +287,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   };
+
+  // real time zipcode validation
+  zip.addEventListener("keyup", (evt) => {
+    let length = evt.target.value.length;
+
+    if (!validateZip()) {
+      showFormValidation("zip", "valid", "not-valid", "block");
+      zip.nextElementSibling.textContent = `You have entered ${length} digit(s). Zip Code must be 5 digits`;
+    } else {
+      showFormValidation("zip", "not-valid", "valid");
+    }
+  });
 
   form.addEventListener("submit", formValidation);
 });
