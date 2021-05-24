@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
       on page load
   --------------------------------*/
 
-  const loadPage = () => {
+  const pageLoad = () => {
     const nameInput = document.getElementById("name");
     const jobInput = document.getElementById("other-job-role");
     const paypalPymt = document.getElementById("paypal");
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     paypalPymt.style.display = "none";
     bitcoinPymt.style.display = "none";
 
-    // sets payment select menu  to credit card optiom
+    // sets payment select menu  to credit card option
     paymentMenu.children[1].selected = true;
 
     // disable color Select
@@ -32,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
     nameInput.focus();
   };
 
-  window.addEventListener("load", loadPage);
+  window.addEventListener("load", pageLoad);
 
   /* --------------------------
         Job Role Section
@@ -91,10 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
   /* --------------------------
        Activities Section
   --------------------------------*/
+  const checkboxes = document.querySelectorAll(".activities input");
 
   // adds activity selection functionality to page
   const handleActivitySelect = (evt) => {
-    const checkboxes = document.querySelectorAll(".activities input");
     const priceOutput = document.querySelector("#activities-cost");
 
     //add the cost of selected activites
@@ -108,32 +108,24 @@ document.addEventListener("DOMContentLoaded", () => {
       return totalCost;
     };
 
-    //blocks a user from registering for activities which have a time conflict
-    // const blockTimeConflict = (checkboxes, clicked) => {
-    //   checkboxes.forEach((box) => {
-    //     if (
-    //       box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
-    //       box !== clicked
-    //     ) {
-    //       box.disabled = true;
-    //     } else if (
-    //       box.dataset.dayAndTime === clicked.dataset.dayAndTime &&
-    //       box !== clicked &&
-    //       !clicked.checked
-    //     ) {
-    //       box.disabled = false;
-    //     }
-    //   });
-    // };
-
-    // if (clicked.tagName === "INPUT") {
-    //   blockTimeConflict(checkboxes, clicked);
-    // }
-
-    let total = getTotalCost(checkboxes);
-    priceOutput.textContent = `Total: $${total}`;
+    priceOutput.textContent = `Total: $${getTotalCost(checkboxes)}`;
   };
 
+  //Adds .focus class to Activities checkbox label on focus event and removes it on blur
+
+  const toggleActivityFocus = (checkboxes) => {
+    checkboxes.forEach((box) => {
+      box.addEventListener("focus", () => {
+        box.parentNode.classList.add("focus");
+      });
+
+      box.addEventListener("blur", () => {
+        box.parentNode.classList.remove("focus");
+      });
+    });
+  };
+
+  toggleActivityFocus(checkboxes);
   activitiesList.addEventListener("change", handleActivitySelect);
 
   /* --------------------------
@@ -208,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const validateCredNum = () => {
     const credNum = document.getElementById("cc-num").value;
     const isCredNumValid = /^\d{13,16}$/.test(credNum);
-
     return isCredNumValid;
   };
 
@@ -216,7 +207,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const validateZip = () => {
     const zip = document.getElementById("zip").value;
     const isZipValid = /^\d{5}$/.test(zip);
-
     return isZipValid;
   };
 
@@ -230,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // form validation event handler
   const formValidation = (evt) => {
     // Shows validation styling on webpage
-    const showPageValidation = (id, status1, status2, display = "") => {
+    const showFormValidation = (id, status1, status2, display = "") => {
       const label = document.getElementById(id).parentNode;
       label.classList.remove(status1);
       label.classList.add(status2);
@@ -239,44 +229,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!nameValidator()) {
       evt.preventDefault();
-      showPageValidation("name", "valid", "not-valid", "block");
+      showFormValidation("name", "valid", "not-valid", "block");
     } else {
-      showPageValidation("name", "not-valid", "valid");
+      showFormValidation("name", "not-valid", "valid");
     }
 
     if (!emailValidator()) {
       evt.preventDefault();
-      showPageValidation("email", "valid", "not-valid", "block");
+      showFormValidation("email", "valid", "not-valid", "block");
     } else {
-      showPageValidation("email", "not-valid", "valid");
+      showFormValidation("email", "not-valid", "valid");
     }
 
     if (!activitiesValidator()) {
       evt.preventDefault();
-      showPageValidation("activities-box", "valid", "not-valid", "block");
+      showFormValidation("activities-box", "valid", "not-valid", "block");
     } else {
-      showPageValidation("activities-box", "not-valid", "valid");
+      showFormValidation("activities-box", "not-valid", "valid");
     }
 
+    // Credit Card Validation
     if (paymentMenu.value === "credit-card") {
       if (!validateCredNum()) {
         evt.preventDefault();
-        showPageValidation("cc-num", "valid", "not-valid", "block");
+        showFormValidation("cc-num", "valid", "not-valid", "block");
       } else {
-        showPageValidation("cc-num", "not-valid", "valid");
+        showFormValidation("cc-num", "not-valid", "valid");
       }
 
       if (!validateZip()) {
         evt.preventDefault();
-        showPageValidation("zip", "valid", "not-valid", "block");
+        showFormValidation("zip", "valid", "not-valid", "block");
       } else {
-        showPageValidation("zip", "not-valid", "valid");
+        showFormValidation("zip", "not-valid", "valid");
       }
       if (!validateCvv()) {
         evt.preventDefault();
-        showPageValidation("cvv", "valid", "not-valid", "block");
+        showFormValidation("cvv", "valid", "not-valid", "block");
       } else {
-        showPageValidation("cvv", "not-valid", "valid");
+        showFormValidation("cvv", "not-valid", "valid");
       }
     }
   };
