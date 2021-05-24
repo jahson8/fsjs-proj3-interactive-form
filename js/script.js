@@ -96,11 +96,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // adds activity selection functionality to page
   const handleActivitySelect = (evt) => {
     const priceOutput = document.querySelector("#activities-cost");
+    const clicked = evt.target;
+    const clickedTime = clicked.dataset.dayAndTime;
 
     //add the cost of selected activites
     const getTotalCost = (checkboxes) => {
       let totalCost = 0;
       checkboxes.forEach((box) => {
+        let time = box.dataset.dayAndTime;
+
+        // stops user from registering for activities with conflicting times
+        if (clickedTime === time && clicked !== box) {
+          if (clicked.checked) {
+            box.disabled = true;
+          } else {
+            box.disabled = false;
+          }
+        }
+
+        //sums the total of selected activities
         if (box.checked) {
           totalCost += +box.dataset.cost;
         }
@@ -112,7 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   //Adds .focus class to Activities checkbox label on focus event and removes it on blur
-
   const toggleActivityFocus = (checkboxes) => {
     checkboxes.forEach((box) => {
       box.addEventListener("focus", () => {
